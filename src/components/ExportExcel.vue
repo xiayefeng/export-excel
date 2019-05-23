@@ -4,6 +4,10 @@
       id="export-btn"
       @click="exportExcel"
     >导出表格</button>
+    <button
+      id="export-btn2"
+      @click="exportJson"
+    >导出数据</button>
     <table id="export-table">
       <thead>
         <tr>
@@ -74,17 +78,30 @@ import XLSX from 'xlsx'
   data: [['id', 'name', 'value'], [1, 'sheetjs', 7262], [2, 'js-xlsx', 6969]]
 } */
 export default {
-  props: {},
+  props: {
+    type: { // 表格类型 1: 从表格导出 2: 从json对象导出
+      type: Number,
+      required: true
+    },
+    thead: {
+      type: Object,
+      default: () => ({})
+    },
+    tbody: {
+      type: Array,
+      default: () => []
+    }
+  },
   components: {},
-  data() {
+  data () {
     return {}
   },
   computed: {},
-  created() {},
-  mounted() {},
+  created () {},
+  mounted () {},
   watch: {},
   methods: {
-    multipleTable() {
+    multipleTable () {
       /* create new workbook */
       var workbook = XLSX.utils.book_new()
 
@@ -97,7 +114,22 @@ export default {
       XLSX.utils.book_append_sheet(workbook, ws2, 'Sheet2')
       XLSX.writeFile(workbook, 'out2.xlsx')
     },
-    exportExcel() {
+    exportJson () {
+      var ws = XLSX.utils.json_to_sheet([
+        { S: 1, h: 2, e: 3, e_1: 4, t: 5, J: 6, S_1: 7 },
+        { S: 2, h: 3, e: 4, e_1: 5, t: 6, J: 7, S_1: 8 }
+      ], { header: ['S', 'h', 'e', 'e_1', 't', 'J', 'S_1'] })
+      var ws2 = XLSX.utils.json_to_sheet([
+        { A: 'S', B: 'h', C: 'e', D: 'e', E: 't', F: 'J', G: 'S' },
+        { A: 1, B: 2, C: 3, D: 4, E: 5, F: 6, G: 7 },
+        { A: 2, B: 3, C: 4, D: 5, E: 6, F: 7, G: 8 }
+      ], { header: ['A', 'B', 'C', 'D', 'E', 'F', 'G'], skipHeader: true })
+      var wb = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(wb, ws, '表格1')
+      XLSX.utils.book_append_sheet(wb, ws2, '表格2')
+      XLSX.writeFile(wb, 'json.xlsx')
+    },
+    exportExcel () {
       /* var worksheet = XLSX.utils.aoa_to_sheet(obj)
       var newWorkbook = XLSX.utils.book_new() */
       var table = document.getElementById('export-table')
@@ -110,4 +142,9 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.export-excel-wrap{
+  button + button{
+    margin-left: 10px;
+  }
+}
 </style>
