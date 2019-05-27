@@ -1,7 +1,7 @@
 <template>
   <div class="about">
     <h1>This is an about page</h1>
-    <export-excel />
+    <export-excel :type="1" />
   </div>
 </template>
 <script>
